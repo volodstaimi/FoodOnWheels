@@ -1,14 +1,37 @@
 package Setup;
 import java.util.*;
 public class Restaurant  {
-	ArrayList<Restaurant> RestaurantList= new ArrayList<Restaurant>();
+	private ArrayList<Restaurant> RestaurantList= new ArrayList<Restaurant>();
 	Restaurant restaurant;
 	private boolean approved=false;
 	private int resID=0;
 	private String resName,resAddress,resPhone;
-	FoodDetails FD;
+	private ArrayList<FoodDetails> FoodList= new ArrayList<FoodDetails>();
 	FileOperations fop= new FileOperations();
-	Restaurant(){}
+	
+	public Restaurant getRestaurantList(int i) {
+		return RestaurantList.get(i);
+	}
+
+	public void setRestaurantList(ArrayList<Restaurant> restaurantList) {
+		RestaurantList = restaurantList;
+	}
+
+
+	Restaurant(){
+//	Restaurant res = new Restaurant(0,"KFC","DHA","051",true);
+//	res.AddNewItem(0,0,"burger1",200.0);
+//	res.AddNewItem(1,3,"burger2",200.0);
+//	res.AddNewItem(2,0,"burger3",200.0);
+//		
+//	Restaurant res2 = new Restaurant(1,"MAC","DHA","021",true);
+//	Restaurant res3 = new Restaurant(2,"Pizzahut","DHA","041",true);
+//	RestaurantList.add(res);
+//	RestaurantList.add(res2);
+//	RestaurantList.add(res3);
+	savedata();
+	}
+	
 
 	public Restaurant(int resID, String resName, String resAddress, String resPhone, boolean approved) {
 		
@@ -17,6 +40,16 @@ public class Restaurant  {
 		this.resAddress = resAddress;
 		this.resPhone = resPhone;
 		this.approved=approved;
+	}
+	public void pop()
+	{
+	Restaurant res = new Restaurant(0,"KFC","DHA","051",true);
+	Restaurant res2 = new Restaurant(1,"MAC","DHA","021",true);
+	Restaurant res3 = new Restaurant(2,"KFC","DHA","041",true);
+	RestaurantList.add(res);
+	RestaurantList.add(res2);
+	RestaurantList.add(res3);
+	savedata();
 	}
 
 	public String getResName() {
@@ -37,17 +70,43 @@ public class Restaurant  {
 	public void setResPhone(String resPhone) {
 		this.resPhone = resPhone;
 	}
-	private void AddNewItem(int foodID, int resID, String foodName, double foodPrice)
+	
+	
+	public void AddNewItem(int resID, String foodName, double foodPrice)
 	{
-		FD= new FoodDetails(foodID, resID, foodName,foodPrice);
+		FoodDetails FD= new FoodDetails((FoodList.size()), resID, foodName,foodPrice);
+		FoodList.add(FD);
+		FD.save(FoodList);
 	}
-	private void AddNewResturant(int resID, String resName, String resAddress, String resPhone,boolean approved,int foodID, String foodName, double foodPrice)
+	public ArrayList<FoodDetails> getFoodList() {
+		return FoodList;
+	}
+	
+	public String getFullFoodList(int resID) {
+		String data="";
+		for (int i=0;i<FoodList.size();i++) 
+		{	if (resID==FoodList.get(i).getResID())
+			data=data+"\n"+FoodList.get(i).getfoodInfo();
+		}
+		
+		return data;
+	}
+
+
+
+	public void setFoodList(ArrayList<FoodDetails> foodList) {
+		FoodList = foodList;
+	}
+
+
+	public void AddNewResturant(int resID, String resName, String resAddress, String resPhone,boolean approved,int foodID, String foodName, double foodPrice)
 	{
-		FD= new FoodDetails(foodID, resID, foodName,foodPrice);
+		FoodDetails FD= new FoodDetails(foodID, resID, foodName,foodPrice);
+		FoodList.add(FD);
 		restaurant= new Restaurant(resID, resName, resAddress, resPhone,approved);
 		RestaurantList.add(restaurant);
 	}
-	private void savedata()
+	public void savedata()
 	{
 		String data="";
 		
@@ -57,6 +116,8 @@ public class Restaurant  {
 			data=(String.valueOf(i)+","+restaurant.resName+","+restaurant.resAddress+","+restaurant.resPhone+","+restaurant.approved)+"\n"+data;
 		}
 			fop.writeFile("Restaurant_Data.txt", data);	
+			FoodDetails fd= new FoodDetails();
+			fd.save(FoodList);
 	}
 	private void getData()
 	{	
@@ -71,6 +132,22 @@ public class Restaurant  {
 			}
 		}
 	}
+	
+//	public void EditFoodDetails(int id, String foodname, double foodPrice)
+//	{
+//		FoodList.get(id).setFoodName(foodname);
+//		FoodList.get(id).setFoodPrice(foodPrice);
+//		savedata();
+//	}
+	
+	public void deleteFoodDetail(int id)
+	{
+		if(!(id>=FoodList.size()))
+		FoodList.remove(id);
+	}
+	
+	
+	
 	private void orders()
 	{
 		fop.readFile("OrdersList");

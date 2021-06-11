@@ -22,7 +22,7 @@ public class FileOperations {
 	{	boolean flg=false;
 		try {
 			FileWriter writer= new FileWriter(fileName);
-			writer.write(data);
+			writer.append(data);
 			flg=true;
 			writer.close();
 		}
